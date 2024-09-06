@@ -6,6 +6,8 @@ from rest_framework.exceptions import ParseError
 
 # User = get_user_model()
 
+from django.core.exceptions import ValidationError
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
     
@@ -24,18 +26,18 @@ class UserManager(BaseUserManager):
         username: Optional[str] = None, 
         **extra_fields: Optional[str]
     ): # type: ignore
-        if not (email or phone_number or username):
-            raise ParseError('Заполните поля email или телефон для входа в систему')
+        if not (email and username):
+            raise ValidationError('Заполните поля email и username для входа в систему')
 
-        if email:
-            email = self.normalize_email(email)
-        
-        if not username:
-            value = self.__check_email_or_phone_number(email, phone_number)
+        # Нормализация email
+        email = self.normalize_email(email)
 
-        user = self.model(username=username, **extra_fields)
-        if email:
-            user.email = email
+        # Проверка, существует ли пользователь с таким email
+        if self.model.objects.filter(email=email).exists():
+            raise ValidationError('Пользователь с таким email уже существует')
+
+        user = self.model(username=username, email=email, **extra_fields)
+
         if phone_number:
             user.phone_number = phone_number
         if user.is_superuser:
@@ -61,7 +63,7 @@ class UserManager(BaseUserManager):
             phone_number, email, password, username, **extra_fields
         )
     
-    def create_super_user(
+    def create_superuser(
         self, 
         phone_number: Optional[str] = None,
         email: Optional[str] = None,
@@ -74,8 +76,8 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
 
         if not extra_fields.get('is_superuser'):
-            raise ValueError('is_superuser fields must be true')
-        
+            raise ValueError('Поле is_superuser должно быть установлено в True')
+
         return self._create_user(
-            username, email, phone_number, password, **extra_fields
+            phone_number, email, password, username, **extra_fields
         )

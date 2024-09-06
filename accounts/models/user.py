@@ -77,11 +77,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=Role.CUSTOMER, 
         verbose_name='Роль | Пользователя'
     )
+    is_staff = models.BooleanField(
+        default=False,
+        verbose_name="Статус персонала"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Активен"
+    )
 
     objects = UserManager()
     
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email']
 
     class Meta:
         app_label = 'accounts'
