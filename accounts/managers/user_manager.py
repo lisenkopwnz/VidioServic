@@ -32,7 +32,6 @@ class UserManager(BaseUserManager):
         
         if not username:
             value = self.__check_email_or_phone_number(email, phone_number)
-            username = value.split('@')[0] if '@' in value else value
 
         user = self.model(username=username, **extra_fields)
         if email:
@@ -54,7 +53,7 @@ class UserManager(BaseUserManager):
         username: Optional[str] = None, 
         **extra_fields: Union[str, bool]
     ): # type: ignore
-        extra_fields.setdefault('is_superiser', False)
+        extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_active', True)
 
@@ -70,7 +69,7 @@ class UserManager(BaseUserManager):
         username: Optional[str] = None, 
         **extra_fields: Union[str, bool]
     ): # type: ignore
-        extra_fields.setdefault('is_superiser', True)
+        extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_active', True)
 
