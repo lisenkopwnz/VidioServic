@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-y)g^edz%e3n!yr#n+r7u!66f5w36t1-lvewhs*de-0lqm8ncy4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [8]
 
 CORS_ALLOWED_ORIGIN = ('http://localhost:8000', 'http://127.0.0.1:8000'
                        'http://localhost:3000', 'http://127.0.0.1:3000')
@@ -40,12 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Library
+    # Packages
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'phonenumber_field',
     # Apps
-    'accounts',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -133,4 +134,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-AUTH_USER_MODEL = "accounts.Customuser"
+AUTH_USER_MODEL = 'accounts.User'
