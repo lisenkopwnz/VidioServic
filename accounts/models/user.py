@@ -26,6 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         email (EmailField): Уникальный email пользователя.
         telephone (PhoneNumberField): Уникальный номер телефона пользователя. Необязательное поле.
         created_at (DateTimeField): Дата создания учетной записи. Устанавливается по умолчанию на текущее время.
+        last_login (DateTimeField): Дата и время последнего входа пользователя. Устанавливается автоматически при входе.
 
     Методы:
             objects (UserManager): Пользовательский менеджер для управления учетными записями.
@@ -71,6 +72,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name="Дата создания"
     )
 
+    last_login = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name = "Дата последнего входа",
+        null=True
+    )
+
     user_role = models.CharField(
         max_length = 3, 
         choices=Role.choices,
@@ -103,6 +110,3 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f'{self.get_full_name} | {self.pk}'
     
-    
-    
-   

@@ -1,10 +1,7 @@
 from django.contrib.auth.models import BaseUserManager
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 from typing import Union, Optional
 from rest_framework.exceptions import ParseError
-
-
-# User = get_user_model()
 
 from django.core.exceptions import ValidationError
 
@@ -12,15 +9,15 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
     
     @staticmethod
-    def __check_email_or_phone_number(
+    def __check_email_or_telephone(
         email: str, 
-        phone_number: str
+        telephone: str
     ) -> Optional[str]:
-        return email or phone_number
+        return email or telephone
     
     def _create_user(
         self, 
-        phone_number: Optional[str] = None,
+        telephone: Optional[str] = None,
         email: Optional[str] = None,
         password: Optional[str] = None,
         username: Optional[str] = None, 
@@ -38,8 +35,8 @@ class UserManager(BaseUserManager):
 
         user = self.model(username=username, email=email, **extra_fields)
 
-        if phone_number:
-            user.phone_number = phone_number
+        if telephone:
+            user.telephone = telephone
         if user.is_superuser:
             user.role = user.Role.ADMIN
 
@@ -49,7 +46,7 @@ class UserManager(BaseUserManager):
     
     def create_user(
         self, 
-        phone_number: Optional[str] = None,
+        telephone: Optional[str] = None,
         email: Optional[str] = None,
         password: Optional[str] = None,
         username: Optional[str] = None, 
@@ -60,12 +57,12 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
 
         return self._create_user(
-            phone_number, email, password, username, **extra_fields
+            telephone, email, password, username, **extra_fields
         )
     
     def create_superuser(
         self, 
-        phone_number: Optional[str] = None,
+        telephone: Optional[str] = None,
         email: Optional[str] = None,
         password: Optional[str] = None,
         username: Optional[str] = None, 
@@ -79,5 +76,5 @@ class UserManager(BaseUserManager):
             raise ValueError('Поле is_superuser должно быть установлено в True')
 
         return self._create_user(
-            phone_number, email, password, username, **extra_fields
+            telephone, email, password, username, **extra_fields
         )
