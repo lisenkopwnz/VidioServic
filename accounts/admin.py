@@ -2,19 +2,68 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from accounts.models import User
+from accounts.models import User, Profile
 from django.contrib.auth.admin import UserAdmin
 
 User = get_user_model()
 
-@admin.register(User)
-class UserAdmin(UserAdmin):
+class ProfileAdmin(admin.TabularInline):
     """
-    Кастомная админка для модели User, которая предоставляет дополнительные
-    функции управления пользователями в Django admin.
+    Встраиваемый интерфейс администрирования для модели Profile,
+    который добавляет вкладку с профилем пользователя на страницу редактирования пользователя.
 
-    Параметры отображения включают поля для работы с базовой информацией пользователя,
-    разрешениями, важными датами, и фильтрами для упрощения поиска и фильтрации.
+    Атрибуты:
+        * `model` (Profile): Модель, которая будет отображаться в виде встроенной формы.
+        * `list_display` (list[str]): Список полей, отображаемых в виде таблицы на странице редактирования.
+        * `list_display_links` (list[str]): Поля, которые будут ссылками на объект в таблице.
+    """
+    model = Profile
+    list_display = ["user", "profile_photo", "description"]  # Поля, которые будут отображаться в списке объектов
+    list_display_links = ["user", "description"]  # Поля, которые будут ссылками на объект
+
+    # def brief_info(self, profile: Profile) -> str:
+    #     """
+    #     Метод для отображения краткой информации о пользователе в админке.
+        
+    #     Аргументы:
+    #         profile (Profile): Экземпляр модели Profile, для которого нужно получить информацию.
+
+    #     Возвращает:
+    #         str: Строка, содержащая полное имя пользователя и количество символов в его биографии.
+    #     """
+    #     return f"{profile.user.first_name} {profile.user.last_name} написал(а) {len(profile.bio)} символов"
+
+    @admin.display(description='Фото пользователя', ordering='user__created_at')
+    def profile_photo(self, profile: Profile) -> str:
+        """
+        Метод для отображения фото профиля в админке.
+        
+        Аргументы:
+            profile (Profile): Экземпляр модели Profile, для которого нужно отобразить фото.
+
+        Возвращает:
+            str: HTML-код для отображения изображения фото профиля.
+        """
+        return format_html("<img src='{}' width=50>", profile.profile_photo.url if profile.profile_photo else '')
+
+
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    """
+    Кастомный интерфейс администрирования для модели User, который позволяет управлять пользователями
+    и их профилями в админке Django.
+
+    Атрибуты:
+        * `fieldsets` (tuple[tuple[str, dict]]): Определяет группы полей и их описание на странице редактирования пользователя.
+        * `add_fieldsets` (tuple[tuple[str, dict]]): Определяет поля для создания нового пользователя.
+        * `list_display` (tuple[str]): Поля, отображаемые в списке пользователей в админке.
+        * `list_display_links` (tuple[str]): Поля, которые будут ссылками для перехода к странице редактирования.
+        * `list_filter` (tuple[str]): Фильтры, доступные для быстрого поиска пользователей.
+        * `search_fields` (tuple[str]): Поля, по которым можно осуществлять поиск пользователей.
+        * `ordering` (tuple[str]): Порядок сортировки пользователей в списке.
+        * `filter_horizontal` (tuple[str]): Горизонтальные фильтры для групп и разрешений.
+        * `readonly_fields` (tuple[str]): Поля, которые только для чтения и не могут быть изменены.
+        * `inlines` (tuple[admin.TabularInline]): Включает встроенные формы, такие как ProfileAdmin.
     """
 
     fieldsets = (
@@ -22,23 +71,23 @@ class UserAdmin(UserAdmin):
             None,
             {
                 "fields": ("username", "email", "telephone"),
-                "description": "Основные поля пользователя."
+                "description": "Основные поля пользователя, такие как имя пользователя и контактная информация."
             }
         ),
-        (_('Personal Info'),
+        (_('Личная информация'),
          {
             "fields": ("first_name", "last_name"),
             "description": "Информация о личных данных пользователя."
          }),
-        (_('Permissions'),
+        (_('Права доступа'),
          {
             "fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions"),
-            "description": "Поля для управления правами доступа пользователя."
+            "description": "Настройки прав доступа пользователя."
         }),
-        (_('Impossible change fields'),
+        (_('Информация о действиях'),
          {
             "fields": ("last_login", "created_at"),
-            "description": "Информация о последних действиях и дате создания пользователя."
+            "description": "Информация о последнем входе и дате создания пользователя."
         }),
     )
     add_fieldsets = (
@@ -49,35 +98,40 @@ class UserAdmin(UserAdmin):
     
     list_display = ("id", "get_full_name", "email", "telephone",)
     """
-    Определяет, какие поля будут отображены в списке пользователей в админке.
+    Поля, отображаемые в списке пользователей в админке.
     """
     
     list_display_links = ("id", "get_full_name",)
     """
-    Устанавливает, какие поля в списке пользователей будут ссылками для перехода на страницу редактирования.
+    Поля в списке пользователей, которые являются ссылками для перехода к странице редактирования.
     """
     
     list_filter = ("is_staff", "is_superuser", "is_active",)
     """
-    Добавляет фильтры по статусам пользователей для быстрого поиска и фильтрации в админке.
+    Фильтры для поиска и фильтрации пользователей по статусам.
     """
     
-    search_fields = ("first_name", "last_name", "email", "phone_number",)
+    search_fields = ("first_name", "last_name", "email", "telephone",)
     """
-    Определяет поля, по которым можно осуществлять поиск пользователей в админке.
+    Поля, по которым можно искать пользователей в админке.
     """
     
     ordering = ("-id", "last_login", "created_at",)
     """
-    Определяет порядок сортировки пользователей в списке. Сначала сортировка по ID в убывающем порядке.
+    Порядок сортировки пользователей в списке админки.
     """
     
     filter_horizontal = ("groups", "user_permissions",)
     """
-    Добавляет горизонтальные фильтры для выбора групп и разрешений пользователей.
+    Горизонтальные фильтры для выбора групп и разрешений.
     """
     
     readonly_fields = ("last_login", "created_at",)
     """
-    Устанавливает поля 'last_login' и 'created_at' как только для чтения, чтобы их нельзя было изменить в админке.
+    Поля 'last_login' и 'created_at', которые только для чтения и не могут быть изменены.
+    """
+    
+    inlines = (ProfileAdmin,)
+    """
+    Включает встроенный интерфейс для управления профилями пользователей.
     """
