@@ -1,6 +1,5 @@
 from datetime import datetime
 import string
-import tempfile
 from typing import Any
 
 import pytest
@@ -102,7 +101,7 @@ class TestModelsContent:
 
         return content_object
 
-    def test_content_slug(self, create_models):
+    def test_content_slug(self, create_models: Content) -> None:
         """ Проверяем добовление переопределенным методом save модели Content уникального слага"""
         assert len(create_models.slug) == 150
         assert create_models.slug != ''

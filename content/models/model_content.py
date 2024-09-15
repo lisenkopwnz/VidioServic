@@ -25,18 +25,19 @@ class Content(models.Model):
     slug = models.SlugField(verbose_name="Уникальный идндефикатор", max_length=150, unique=True, db_index=True,
                             blank=False, null=False)
     pub_date_time = models.DateTimeField(verbose_name="Дата и время публикации", auto_now_add=True)
-    categories_content = models.ManyToManyField(Category, related_name='categories_content')
+    categories_content = models.ManyToManyField(Category, related_name='categories_content', null=True, blank=True)
     author_content = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="author")
-
-    def __str__(self):
-        return f'{self.title}'
 
     class Meta:
         verbose_name = "Контент"
         verbose_name_plural = "Контент"
+
+    def __str__(self):
+        return f'{self.title}'
 
     def save(self, *args, **kwargs):
         """ Переопределяем метод save из базового класса модель для автоиатического добавления slug"""
         if not self.slug:
             self.slug = slug_generation(size_slug=150)
         super().save(*args, **kwargs)
+

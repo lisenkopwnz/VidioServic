@@ -6,9 +6,9 @@ from .models.model_content import Content, Category
 @admin.register(Content)
 class ContentAdmin(admin.ModelAdmin):
     # Используется для определения столбцов, которые будут отображаться в списке объектов модели.
-    list_display = ('title', 'description', 'pub_date_time', 'author_content')
+    list_display = ('title', 'description', 'author_content')
     # Удаляем определенное поле при создании записи
-    exclude = ('slug',)
+    exclude = ('slug', 'pub_date_time')
     # Добавляем фильтрацию
     list_filter = ('pub_date_time',)
     # Количество записей еа одной странице
