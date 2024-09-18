@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'phonenumber_field',
     # Apps
     'accounts.apps.AccountsConfig',
+    'payment.apps.PaymentConfig',
+    'subscription.apps.SubscriptionConfig',
 ]
 
 MIDDLEWARE = [
