@@ -51,6 +51,8 @@ class Subscription(models.Model):
         """
         if self.plan == self.Plan.PREMIUM and not self.end_date:
             self.end_date = self.start_date + timedelta(days=45)
+        if self.plan == self.Plan.BASIC:
+            self.end_date = None
         super().save(*args, **kwargs)
 
     def is_active(self):
