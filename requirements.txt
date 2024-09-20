@@ -9,3 +9,4 @@ pyflakes==3.2.0
 sqlparse==0.5.1
 django-pytest==0.2.0
 pytest==8.3.2
+django_currentuser==0.8.0
