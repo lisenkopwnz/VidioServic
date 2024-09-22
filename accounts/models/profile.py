@@ -63,6 +63,7 @@ class Profile(models.Model):
         verbose_name=_("Страна"),
     )
 
+ 
     class Meta:
         verbose_name = _("Профиль")
         verbose_name_plural = _("Профили")
