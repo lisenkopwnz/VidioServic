@@ -107,6 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
+
     class Meta:
         app_label = 'accounts'
         verbose_name = "Пользователь"
