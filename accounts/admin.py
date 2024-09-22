@@ -2,10 +2,12 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from accounts.models import User, Profile
+from accounts.models import Profile,User
 from django.contrib.auth.admin import UserAdmin
 
 User = get_user_model()
+admin.site.unregister(User)
+
 
 class ProfileAdmin(admin.TabularInline):
     """
@@ -24,7 +26,7 @@ class ProfileAdmin(admin.TabularInline):
     # def brief_info(self, profile: Profile) -> str:
     #     """
     #     Метод для отображения краткой информации о пользователе в админке.
-        
+
     #     Аргументы:
     #         profile (Profile): Экземпляр модели Profile, для которого нужно получить информацию.
 
@@ -70,67 +72,67 @@ class CustomUserAdmin(UserAdmin):
         (
             None,
             {
-                "fields": ("username", "email", "telephone"),
+                "fields": ("username", "email"),
                 "description": "Основные поля пользователя, такие как имя пользователя и контактная информация."
             }
         ),
         (_('Личная информация'),
          {
-            "fields": ("first_name", "last_name"),
-            "description": "Информация о личных данных пользователя."
+             "fields": ("first_name", "last_name"),
+             "description": "Информация о личных данных пользователя."
          }),
         (_('Права доступа'),
          {
-            "fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions"),
-            "description": "Настройки прав доступа пользователя."
-        }),
+             "fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions"),
+             "description": "Настройки прав доступа пользователя."
+         }),
         (_('Информация о действиях'),
          {
-            "fields": ("last_login", "created_at"),
-            "description": "Информация о последнем входе и дате создания пользователя."
-        }),
+             "fields": ("last_login",),
+             "description": "Информация о последнем входе и дате создания пользователя."
+         }),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'username', 'password1', 'password2'),
         }),)
-    
-    list_display = ("id", "get_full_name", "email", "telephone",)
+
+    list_display = ("id", "get_full_name", "email",)
     """
     Поля, отображаемые в списке пользователей в админке.
     """
-    
+
     list_display_links = ("id", "get_full_name",)
     """
     Поля в списке пользователей, которые являются ссылками для перехода к странице редактирования.
     """
-    
+
     list_filter = ("is_staff", "is_superuser", "is_active",)
     """
     Фильтры для поиска и фильтрации пользователей по статусам.
     """
-    
-    search_fields = ("first_name", "last_name", "email", "telephone",)
+
+    search_fields = ("first_name", "last_name", "email",)
     """
     Поля, по которым можно искать пользователей в админке.
     """
-    
-    ordering = ("-id", "last_login", "created_at",)
+
+    ordering = ("-id", "last_login",)
     """
     Порядок сортировки пользователей в списке админки.
     """
-    
+
     filter_horizontal = ("groups", "user_permissions",)
     """
     Горизонтальные фильтры для выбора групп и разрешений.
     """
-    
-    readonly_fields = ("last_login", "created_at",)
+
+    readonly_fields = ("last_login",)
     """
     Поля 'last_login' и 'created_at', которые только для чтения и не могут быть изменены.
     """
-    
+
     inlines = (ProfileAdmin,)
     """
     Включает встроенный интерфейс для управления профилями пользователей.

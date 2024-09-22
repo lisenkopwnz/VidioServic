@@ -5,19 +5,20 @@ from accounts.models import User
 
 User = get_user_model()
 COUNTRY_CHOICES = [
-        ('other', 'Международный'),
-        ('AZ', 'Азербайджан'),
-        ('AM', 'Армения'),
-        ('BY', 'Беларусь'),
-        ('KZ', 'Казахстан'),
-        ('KG', 'Кыргызстан'),
-        ('MD', 'Молдова'),
-        ('RU', 'Россия'),
-        ('TJ', 'Таджикистан'),
-        ('TM', 'Туркменистан'),
-        ('UZ', 'Узбекистан'),
-        #
-    ]   
+    ('other', 'Международный'),
+    ('AZ', 'Азербайджан'),
+    ('AM', 'Армения'),
+    ('BY', 'Беларусь'),
+    ('KZ', 'Казахстан'),
+    ('KG', 'Кыргызстан'),
+    ('MD', 'Молдова'),
+    ('RU', 'Россия'),
+    ('TJ', 'Таджикистан'),
+    ('TM', 'Туркменистан'),
+    ('UZ', 'Узбекистан'),
+    #
+]
+
 
 class Profile(models.Model):
     """
@@ -40,18 +41,18 @@ class Profile(models.Model):
         __str__(): Возвращает строковое представление профиля пользователя, основанное на его электронной почте.
     """
     user = models.OneToOneField(
-        to=User, 
-        on_delete=models.CASCADE, 
-        related_name='profile', 
-        verbose_name=_("Пользователь"), 
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='profile',
+        verbose_name=_("Пользователь"),
         primary_key=True
     )
     description = models.TextField(
-        verbose_name=_("Описание"), 
+        verbose_name=_("Описание"),
         blank=True
     )
     user_photo = models.ImageField(
-        upload_to='profile_photos/', 
+        upload_to='profile_photos/',
         verbose_name=_("Фото пользователя"),
         default=None,
         blank=True
@@ -59,19 +60,16 @@ class Profile(models.Model):
     country = models.CharField(
         max_length=5,
         choices=COUNTRY_CHOICES,
-        verbose_name=_("Страна"), 
+        verbose_name=_("Страна"),
     )
 
     class Meta:
         verbose_name = _("Профиль")
         verbose_name_plural = _("Профили")
-    
+
     def __str__(self):
         return self.user.email
 
     # def get_absolute_url(self):
     #     """Возвращает абсолютный URL для просмотра профиля."""
     #     return reverse("Профиль_detail", kwargs={"pk": self.pk})
-
-
- 
