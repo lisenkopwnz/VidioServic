@@ -1,9 +1,7 @@
 import re
-
 from django.contrib.auth import get_user_model
 from django.db import models
 from django_currentuser.middleware import get_current_user
-
 from content.models.model_content import Content
 
 

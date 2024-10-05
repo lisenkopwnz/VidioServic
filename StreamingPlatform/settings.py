@@ -9,8 +9,9 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
 from pathlib import Path
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     # Packages
     'rest_framework',
     'rest_framework.authtoken',
+    ''
     # Apps
     'accounts',
     'content',
@@ -89,13 +91,34 @@ WSGI_APPLICATION = 'StreamingPlatform.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('DB_USER', default='postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='localhost'),
+        'PORT': os.getenv('DB_PORT', default=5432),
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+REST_FRAMEWORK = {
+
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_frameworf.permissions.IsAuthenticated',
+    ),
+
+    'DEFAU:T_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+
+    'DEFAU:T_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FileUploadParser',
+    ),
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openai.AutoSchema'
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -133,5 +156,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = BASE_DIR / 'media'  #абсолютный путь к физической директории, где будут храниться файлы.
-MEDIA_URL = '/media/'  #URL-путь, который будет использоваться для доступа к медиафайлам.
+MEDIA_ROOT = BASE_DIR / 'media'  # абсолютный путь к физической директории, где будут храниться файлы.
+MEDIA_URL = '/media/'  # URL-путь, который будет использоваться для доступа к медиафайлам.
