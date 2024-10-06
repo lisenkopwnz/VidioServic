@@ -89,8 +89,12 @@ WSGI_APPLICATION = 'StreamingPlatform.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'myproject_db',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -133,5 +137,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = BASE_DIR / 'media'  #абсолютный путь к физической директории, где будут храниться файлы.
-MEDIA_URL = '/media/'  #URL-путь, который будет использоваться для доступа к медиафайлам.
+MEDIA_ROOT = BASE_DIR / 'media'  # абсолютный путь к физической директории, где будут храниться файлы.
+MEDIA_URL = '/media/'  # URL-путь, который будет использоваться для доступа к медиафайлам.

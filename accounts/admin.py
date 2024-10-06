@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from accounts.models import Profile,User
+from accounts.models import Profile, User
 from django.contrib.auth.admin import UserAdmin
 
 User = get_user_model()
@@ -39,7 +39,7 @@ class ProfileAdmin(admin.TabularInline):
     def profile_photo(self, profile: Profile) -> str:
         """
         Метод для отображения фото профиля в админке.
-        
+
         Аргументы:
             profile (Profile): Экземпляр модели Profile, для которого нужно отобразить фото.
 
@@ -80,17 +80,17 @@ class CustomUserAdmin(UserAdmin):
          {
              "fields": ("first_name", "last_name"),
              "description": "Информация о личных данных пользователя."
-         }),
+        }),
         (_('Права доступа'),
          {
              "fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions"),
              "description": "Настройки прав доступа пользователя."
-         }),
+        }),
         (_('Информация о действиях'),
          {
              "fields": ("last_login",),
              "description": "Информация о последнем входе и дате создания пользователя."
-         }),
+        }),
     )
     add_fieldsets = (
         (None, {

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 class Payment(models.Model):
     """
     Модель для управления платежами в системе подписок.
@@ -51,8 +52,8 @@ class Payment(models.Model):
         max_length=50,
         choices=PAYMENT_METHOD.choices
     )
-    # subscription = models.OneToOneField(  
-    #     "app.Subscription",  
+    # subscription = models.OneToOneField(
+    #     "app.Subscription",
     #     verbose_name=_("Подписка"),
     #     on_delete=models.CASCADE
     # )
@@ -94,9 +95,8 @@ class Payment(models.Model):
     def __str__(self):
         """
         Возвращает строковое представление объекта платежа.
-        
+
         Возвращает:
             str: Транзакционный ID и сумму платежа.
         """
         return f"{self.transaction_id} - {self.amount}"
-

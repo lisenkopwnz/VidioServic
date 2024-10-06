@@ -16,7 +16,7 @@ class ContentAdmin(admin.ModelAdmin):
     # Добовляем понель поиска для указанных полей
     search_fields = ('title', 'description')
     # Добовляем текст помощи для поисковой строки
-    search_help_text = '''Введите ключевые слова для поиска по названию и описанию. 
+    search_help_text = '''Введите ключевые слова для поиска по названию и описанию.
                           Используйте точные совпадения для лучших результатов.'''
     filter_horizontal = ['categories_content']
 

@@ -6,6 +6,7 @@ from django.utils import timezone
 
 User = get_user_model()
 
+
 class Subscription(models.Model):
     """
     Модель подписки пользователя на тарифные планы.

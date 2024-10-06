@@ -13,4 +13,3 @@ class AdminPlaylist(admin.ModelAdmin):
         form.base_fields['name'].help_text = ("Если вы не укажите название плейлиста,оно будет сгенерированно "
                                               "автоматчески")
         return form
-

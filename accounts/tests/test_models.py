@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 
+
 @pytest.mark.django_db
 class TestUserModule:
     def test_create_user(self):
@@ -48,7 +49,6 @@ class TestUserModule:
         user = authenticate(username='uniqueuser', password='rfvtgbyhn')
         assert user.last_login is not None
         assert user.last_login <= timezone.now()
-
 
     def test_created_at(self):
         """

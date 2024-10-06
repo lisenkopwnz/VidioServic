@@ -3,13 +3,11 @@ from typing import Any
 
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
-from django.test import TestCase
 
 import pytest
 
 from content.models.model_content import Content
 from playlist.models import Playlist
-
 
 
 class TestPlaylist:

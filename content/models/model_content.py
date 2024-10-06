@@ -40,4 +40,3 @@ class Content(models.Model):
         if not self.slug:
             self.slug = slug_generation(size_slug=150)
         super().save(*args, **kwargs)
-

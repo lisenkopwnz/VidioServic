@@ -113,6 +113,5 @@ class TestModelsContent:
         update_content_title = Content.objects.get(title='Mult')
         assert update_content_title.title == 'Mult'
 
-    def test_foreign_keys_content(self,create_models: Content) -> None:
+    def test_foreign_keys_content(self, create_models: Content) -> None:
         assert str(create_models.author_content) == 'test_user'
-
