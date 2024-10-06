@@ -58,10 +58,15 @@ class Subscription(models.Model):
 
     def is_active(self):
         """
-        Проверяет, активна ли подписка.
-        Активна, если дата окончания не установлена или дата окончания позже текущего времени.
+        Проверяет, активна ли подписка. Если истекла, переводит на базовый план.
         """
-        return self.end_date is None or self.end_date > timezone.now()
+        # после будем делать через celery
+        if self.end_date and self.end_date <= timezone.now():
+            self.plan = self.Plan.BASIC
+            self.end_date = None
+            self.save()
+            return False
+        return True
 
     def __str__(self):
         """
