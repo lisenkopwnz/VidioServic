@@ -5,9 +5,8 @@ from django.utils.translation import gettext_lazy as _
 from accounts.models import Profile, User
 from django.contrib.auth.admin import UserAdmin
 
-
-admin.site.unregister(User)
 User = get_user_model()
+admin.site.unregister(User)
 
 
 class ProfileAdmin(admin.TabularInline):

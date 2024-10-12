@@ -1,13 +1,13 @@
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    PermissionsMixin,
-    Group, Permission
-)
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from accounts.managers.user_manager import UserManager
 from django.utils import timezone
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    Group, Permission
+)
 
 
 class User(AbstractBaseUser, PermissionsMixin):

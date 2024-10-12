@@ -16,11 +16,11 @@ while ! nc -z $DB_HOST $DB_PORT; do
     fi
 done
 
-# echo "Сборка статических файлов..."
-# if ! python manage.py collectstatic --no-input; then 
-#     echo "Ошибка: Не удалось собрать статические файлы"
-#     exit 1
-# fi 
+echo "Сборка статических файлов..."
+if ! python manage.py collectstatic --no-input; then 
+    echo "Ошибка: Не удалось собрать статические файлы"
+    exit 1
+fi 
 
 exec "$@"
 

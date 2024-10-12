@@ -14,12 +14,12 @@ DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 
-# region --------------------------- CORS HEADERS -----------------------------------
+# region ---------------- CORS HEADERS -------------------
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ['*']
 CSRF_COOKIE_SECURE = False
-# endregion -------------------------------------------------------------------------
+# endregion ----------------------------------------------
 
 
 INSTALLED_APPS = [
@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'playlist',
     'subscription',
     'payment',
+    'api',
+    'common',
+
 ]
 
 MIDDLEWARE = [
@@ -75,7 +78,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'StreamingPlatform.wsgi.application'
 
-# region --------------------------- DATABASE -----------------------------------
+# region --------------------- DATABASE ------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -86,9 +89,9 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', default=5432),
     }
 }
-# endregion -------------------------------------------------------------------------
+# endregion ------------------------------------------------------------
 
-# region --------------------------- REST FRAMEWORK -----------------------------------
+# region ---------------------- REST FRAMEWORK ----------------------
 REST_FRAMEWORK = {
 
     'DEFAULT_PERMISSION_CLASSES': (
@@ -111,7 +114,7 @@ REST_FRAMEWORK = {
 }
 # endregion -------------------------------------------------------------------------
 
-# region --------------------------- SIPMLE JWT -----------------------------------
+# region ---------------------- SIPMLE JWT --------------------------
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -168,7 +171,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+LANGUAGES = [
+    ('en', 'English'),
+    ('ru', 'Russian'),
+]
+# region ------------- LOVCALIZATION ---------------
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -176,12 +183,14 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+# endregion --------------------------------------------
+# region ------------- MEDIA AND STATIC ---------------
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '../', 'mediafiles')
 
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, '../', 'staticfiles')
+# endregion --------------------------------------------
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-MEDIA_ROOT = BASE_DIR / 'media'  # абсолютный путь к физической директории, где будут храниться файлы.
-MEDIA_URL = '/media/'  # URL-путь, который будет использоваться для доступа к медиафайлам.

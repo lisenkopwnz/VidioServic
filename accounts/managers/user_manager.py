@@ -1,28 +1,26 @@
 from django.contrib.auth.models import BaseUserManager
-from django.contrib.auth import get_user_model
 from typing import Union, Optional
-from rest_framework.exceptions import ParseError
-
 from django.core.exceptions import ValidationError
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
-    
+
     @staticmethod
     def __check_email_or_telephone(
-        email: str, 
+        email: str,
         telephone: str
     ) -> Optional[str]:
         return email or telephone
-    
+
     def _create_user(
-        self, 
+        self,
         telephone: Optional[str] = None,
         email: Optional[str] = None,
         password: Optional[str] = None,
-        username: Optional[str] = None, 
+        username: Optional[str] = None,
         **extra_fields: Optional[str]
-    ): # type: ignore
+    ):  # type: ignore
         if not (email and username):
             raise ValidationError('Заполните поля email и username для входа в систему')
 
@@ -43,15 +41,15 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
+
     def create_user(
-        self, 
+        self,
         telephone: Optional[str] = None,
         email: Optional[str] = None,
         password: Optional[str] = None,
-        username: Optional[str] = None, 
+        username: Optional[str] = None,
         **extra_fields: Union[str, bool]
-    ): # type: ignore
+    ):
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_active', True)
@@ -59,15 +57,15 @@ class UserManager(BaseUserManager):
         return self._create_user(
             telephone, email, password, username, **extra_fields
         )
-    
+
     def create_superuser(
-        self, 
+        self,
         telephone: Optional[str] = None,
         email: Optional[str] = None,
         password: Optional[str] = None,
-        username: Optional[str] = None, 
+        username: Optional[str] = None,
         **extra_fields: Union[str, bool]
-    ): # type: ignore
+    ):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_active', True)
