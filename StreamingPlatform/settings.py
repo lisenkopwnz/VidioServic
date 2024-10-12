@@ -1,10 +1,9 @@
-
 from pathlib import Path
 import os
 from datetime import timedelta
 import environ
 
-
+# region ---------------------- BASE CONFIGURATION -----------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -12,40 +11,51 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
+# endregion --------------------------------------------------------------------------------
 
-
-# region ---------------- CORS HEADERS -------------------
+# region ---------------------- CORS HEADERS -----------------------------------------------
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ['*']
 CSRF_COOKIE_SECURE = False
-# endregion ----------------------------------------------
+# endregion ---------------------------------------------------------------------------------
 
 
 INSTALLED_APPS = [
+    # region ----------------- BASE DJANGO PACKAGES -----------
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Packages
+    # endregion ------------------------------------------------
+
+    # region ----------------- REST FRAMWORK MODULES -----------
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    # endregion -------------------------------------------------
 
-    # Apps
+    # region ----------------- APPLECATIONS --------------------
+    'api',  # приложения где будут все апи
+    'common',  # приложения где будут функциии которые чаще используются для DRY
+    # AUTH
     'accounts',
+    # CONTENT
     'content',
     'comments',
     'statistic',
     'playlist',
+    # PAYMENT
     'subscription',
     'payment',
-    'api',
-    'common',
+    # endregion --------------------------------------------------
+
     'drf_spectacular',  # всегда указывать после всех других созданных приложений проекта или же в конце
 ]
+
+# region -------------------- MD & TEMP & WSGI & VALIDATORS & URLCONF -----------------------
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -77,10 +87,25 @@ TEMPLATES = [
         },
     },
 ]
-
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 WSGI_APPLICATION = 'StreamingPlatform.wsgi.application'
 
-# region --------------------- DATABASE ------------------------
+# endregion ------------------------------------------------------------------------
+
+# region ---------------------- DATABASE ----------------------------------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -91,9 +116,9 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', default=5432),
     }
 }
-# endregion ------------------------------------------------------------
+# endregion ---------------------------------------------------------------------------------
 
-# region ---------------------- REST FRAMEWORK ----------------------
+# region ---------------------- REST FRAMEWORK ----------------------------------------------
 REST_FRAMEWORK = {
 
     'DEFAULT_PERMISSION_CLASSES': (
@@ -117,7 +142,7 @@ REST_FRAMEWORK = {
 }
 # endregion -------------------------------------------------------------------------
 
-# region ---------------------- SIPMLE JWT --------------------------
+# region ---------------------- SIPMLE JWT & DJOSER -----------------------------------------
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -158,17 +183,17 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-JOSER = {
+DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {},
 }
-# endregion -------------------------------------------------------------------------
+# endregion -------------------------------------------------------------------------=========
 
-
-SSPECTACULAR_SETTINGS = {
+# region ---------------------- SPECTACULLAR  SETTINGS  --------------------------------------
+SPECTACULAR_SETTINGS = {
     'TITLE': 'STREAMING PLATFORM',
     'DESCRIPTION': 'Проект, который должен заменить YouTube и стать лучше него в СНГ',  # Consider adding an English translation
     'VERSION': '1.0.0',
@@ -186,35 +211,21 @@ SSPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
     'SORT_OPERATIONS': False,
 }
+# endregion -------------------------------------------------------------------
 
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
-# region ------------- LOVCALIZATION ---------------
+# region ---------------------- LOVCALIZATION ------------------------------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-# endregion --------------------------------------------
+# endregion ----------------------------------------------------------------------------------
 
-# region ------------- MEDIA AND STATIC ---------------
+# region ---------------------- MEDIA AND STATIC ----------------------------------------------
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '../', 'mediafiles')
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '../', 'staticfiles')
-# endregion --------------------------------------------
+# endregion ------------------------------------------------------------------------------------
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
