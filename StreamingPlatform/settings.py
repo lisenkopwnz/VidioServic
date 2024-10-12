@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+
     # Apps
     'accounts',
     'content',
@@ -43,7 +44,7 @@ INSTALLED_APPS = [
     'payment',
     'api',
     'common',
-
+    'drf_spectacular',  # всегда указывать после всех других созданных приложений проекта или же в конце
 ]
 
 MIDDLEWARE = [
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_currentuser.middleware.ThreadLocalUserMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'StreamingPlatform.urls'
@@ -101,6 +103,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+
     ),
 
     'DEFAULT_PARSER_CLASSES': (
@@ -110,7 +113,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FileUploadParser',
     ),
 
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openai.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 # endregion -------------------------------------------------------------------------
 
@@ -154,7 +157,36 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+JOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
+    'SERIALIZERS': {},
+}
 # endregion -------------------------------------------------------------------------
+
+
+SSPECTACULAR_SETTINGS = {
+    'TITLE': 'STREAMING PLATFORM',
+    'DESCRIPTION': 'Проект, который должен заменить YouTube и стать лучше него в СНГ',  # Consider adding an English translation
+    'VERSION': '1.0.0',
+    'SERVE_PERMISSIONS': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'SERVE_AUTHENTICATION': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'SWAGGER_UI_SETTINGS': {
+        'DeepLinking': True,
+        'DisplayOperationId': True,
+    },
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SORT_OPERATIONS': False,
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -171,24 +203,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGES = [
-    ('en', 'English'),
-    ('ru', 'Russian'),
-]
 # region ------------- LOVCALIZATION ---------------
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 # endregion --------------------------------------------
+
 # region ------------- MEDIA AND STATIC ---------------
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '../', 'mediafiles')
-
-
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '../', 'staticfiles')
 # endregion --------------------------------------------
