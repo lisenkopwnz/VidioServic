@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     # endregion -------------------------------------------------
 
-    # region ----------------- APPLECATIONS --------------------
+    # region ----------------- APPLICATIONS --------------------
     'api',  # приложения где будут все апи
     'common',  # приложения где будут функциии которые чаще используются для DRY
     # AUTH
@@ -87,6 +87,7 @@ TEMPLATES = [
         },
     },
 ]
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -101,20 +102,26 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 WSGI_APPLICATION = 'StreamingPlatform.wsgi.application'
 
 # endregion ------------------------------------------------------------------------
 
 # region ---------------------- DATABASE ----------------------------------------------------
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': os.getenv('DB_NAME', default='postgres'),
+    #     'USER': os.getenv('DB_USERNAME', default='postgres'),
+    #     'PASSWORD': os.getenv('DB_PASSWORD', default='postgres'),
+    #     'HOST': os.getenv('DB_HOST', default='localhost'),
+    #     'PORT': os.getenv('DB_PORT', default=5432),
+    # },
+
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', default='postgres'),
-        'USER': os.getenv('DB_USERNAME', default='postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', default='postgres'),
-        'HOST': os.getenv('DB_HOST', default='localhost'),
-        'PORT': os.getenv('DB_PORT', default=5432),
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
 }
 # endregion ---------------------------------------------------------------------------------
 
@@ -201,7 +208,7 @@ SPECTACULAR_SETTINGS = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'SERVE_AUTHENTICATION': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
     'SWAGGER_UI_SETTINGS': {
@@ -227,5 +234,6 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '../', 'staticfiles')
 # endregion ------------------------------------------------------------------------------------
 
-
+AUTH_USER_MODEL = 'accounts.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTHENTICATION_BACKENDS = ('accounts.backends.AuthBackend',)

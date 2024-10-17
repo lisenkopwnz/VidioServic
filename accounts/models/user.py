@@ -117,4 +117,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name}|{self.last_name}"
 
     def __str__(self):
-        return f'{self.get_full_name} | {self.pk}'
+        # return f'{self.get_full_name} | {self.pk}'
+
+        telephone = self.telephone if self.telephone else "No phone"
+        role = self.get_user_role_display()  # Получаем текстовое представление роли
+        return f'{self.get_full_name} | {self.pk} | {role} | {telephone}'

@@ -1,9 +1,7 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from accounts.models import User
 
-User = get_user_model()
 COUNTRY_CHOICES = [
     ('other', 'Международный'),
     ('AZ', 'Азербайджан'),
@@ -16,7 +14,7 @@ COUNTRY_CHOICES = [
     ('TJ', 'Таджикистан'),
     ('TM', 'Туркменистан'),
     ('UZ', 'Узбекистан'),
-    #
+
 ]
 
 
