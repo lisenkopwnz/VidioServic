@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 from datetime import timedelta
 import environ
+import psycopg2
 
 # region ---------------------- BASE CONFIGURATION -----------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -108,21 +109,40 @@ WSGI_APPLICATION = 'StreamingPlatform.wsgi.application'
 # endregion ------------------------------------------------------------------------
 
 # region ---------------------- DATABASE ----------------------------------------------------
-DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': os.getenv('DB_NAME', default='postgres'),
-    #     'USER': os.getenv('DB_USERNAME', default='postgres'),
-    #     'PASSWORD': os.getenv('DB_PASSWORD', default='postgres'),
-    #     'HOST': os.getenv('DB_HOST', default='localhost'),
-    #     'PORT': os.getenv('DB_PORT', default=5432),
-    # },
+# Функция проверки доступности PostgreSQL
+def is_postgres_available():
+    try:
+        conn = psycopg2.connect(
+            dbname=env.str('PG_DATABASE', 'postgres'),
+            user=env.str('PG_USER', 'postgres'),
+            password=env.str('PG_PASSWORD', 'postgres'),
+            host=env.str('DB_HOST', 'localhost'),
+            port=env.int('DB_PORT', 5432),
+        )
+        conn.close()
+        return True
+    except psycopg2.OperationalError:
+        return False
 
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-}
+# Настройка баз данных с проверкой доступности PostgreSQL
+if is_postgres_available():
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': env.str('DB_NAME', 'postgres'),
+            'USER': env.str('DB_USERNAME', 'postgres'),
+            'PASSWORD': env.str('DB_PASSWORD', 'postgres'),
+            'HOST': env.str('DB_HOST', 'localhost'),
+            'PORT': env.int('DB_PORT', 5432),
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 # endregion ---------------------------------------------------------------------------------
 
 # region ---------------------- REST FRAMEWORK ----------------------------------------------
@@ -237,3 +257,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, '../', 'staticfiles')
 AUTH_USER_MODEL = 'accounts.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = ('accounts.backends.AuthBackend',)
+
