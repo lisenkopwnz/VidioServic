@@ -8,8 +8,7 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from accounts.serializers.nested.profile import ProfileShortSerializer, ProfileUpdateSerializer
 
 User = get_user_model()
-# region ------------------- AUTHENTICATION AND AVTORITHATION -------------------
-
+# region ------------------- AUTHENTICATION AND AUTHORISATION -------------------
 
 class RegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
@@ -38,14 +37,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         )
 
-    def validate_email(self, value):
-        email = value.lower()
+    def validate(self, attrs):
+        email = attrs['email'].lower()
+        username = attrs['username']
         if User.objects.filter(email=email).exists():
-            # raise serializers.ValidationError('Пользователь с такой почтой уже зарегистрирован.')
-            raise ParseError(
-                'Пользователь с такой почтой уже зарегистрирован.'
-            )
-        return email
+            raise ParseError('Пользователь с такой почтой уже зарегистрирован.')
+        if User.objects.filter(username=username).exists():
+            raise ParseError('Пользователь с таким именем уже зарегистрирован.')
+        return attrs
 
     def validate_password(self, value):
         validate_password(value)
@@ -54,12 +53,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = User.objects.create_user(**validated_data)
-        user.set_password(password)  # Хэширование пароля
+        user.set_password(password)  # Хеширование пароля
         user.save()
         return user
 
 # endregion ---------------------------------------------------------------------
 
+# region ------------------- PASSWORD CHANGING -----------------------------------
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(write_only=True)
@@ -85,9 +85,12 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         password = validated_data.pop('new_password')
         instance.set_password(password)
+        instance.save()
         return instance
 
+# endregion ---------------------------------------------------------------------------
 
+# region ------------------- USER (USER_UPDATE) AND PROFILE SERIALIZERS ----------------------
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileShortSerializer()
 
@@ -104,7 +107,6 @@ class UserSerializer(serializers.ModelSerializer):
             'profile',
             'created_at',
         )
-
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     profile = ProfileUpdateSerializer()
@@ -137,3 +139,5 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         )
         profile_serializer.is_valid(raise_exception=True)
         profile_serializer.save()
+
+#endregion --------------------------------------------------------------------

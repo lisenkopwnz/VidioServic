@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # endregion ------------------------------------------------
 
-    # region ----------------- REST FRAMWORK MODULES -----------
+    # region ----------------- REST FRAMEWORK MODULES -----------
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 
     # region ----------------- APPLICATIONS --------------------
     'api',  # приложения где будут все апи
-    'common',  # приложения где будут функциии которые чаще используются для DRY
+    'common',  # приложения, где будут функции которые чаще используются для DRY
     # AUTH
     'accounts',
     # CONTENT
@@ -222,7 +222,7 @@ DJOSER = {
 # region ---------------------- SPECTACULLAR  SETTINGS  --------------------------------------
 SPECTACULAR_SETTINGS = {
     'TITLE': 'STREAMING PLATFORM',
-    'DESCRIPTION': 'Проект, который должен заменить YouTube и стать лучше него в СНГ',  # Consider adding an English translation
+    'DESCRIPTION': 'Проект, который должен заменить YouTube и стать лучше него в СНГ',
     'VERSION': '1.0.0',
     'SERVE_PERMISSIONS': [
         'rest_framework.permissions.IsAuthenticated',
