@@ -16,9 +16,9 @@ class ContentApiView(generics.GenericAPIView):
         if category_name:
             category_name_list = category_name.split(',')
             return (Category.objects.prefetch_related('categories_content')
-                    .filter(name__in=category_name_list, is_private=False))
+                    .filter(name__in=category_name_list, categories_content__is_private=False))
 
-        return Category.objects.prefetch_related('categories_content').filter(is_private=False)
+        return Category.objects.prefetch_related('categories_content').filter(categories_content__is_private=False)
 
     def get(self, request, *args, **kwargs):
         categories = self.get_queryset()

@@ -8,7 +8,7 @@ class ContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Content
         fields = ['id', 'title', 'content', 'description', 'slug', 'pub_date_time', 'categories_content',
-                  ]
+                  'is_private']
 
 
 class CategorySerializer(serializers.ModelSerializer):
