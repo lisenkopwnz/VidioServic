@@ -62,6 +62,11 @@ class Profile(models.Model):
         choices=COUNTRY_CHOICES,
         verbose_name=_("Страна"),
     )
+    subscription_active = models.BooleanField(
+        verbose_name='Статус подписки на закрытый котент',  # можно сделать предложение о платной подписке в момент
+        #регестрации , если клиент отказался будет ставиться в False
+        default=False
+    )
 
     class Meta:
         verbose_name = _("Профиль")

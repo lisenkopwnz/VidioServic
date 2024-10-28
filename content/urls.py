@@ -1,9 +1,13 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
-from content.views import ContentApiView
+from content.views import ContentViewSet
 
 app_name = 'content'
 
+router = routers.SimpleRouter()
+router.register(r'content', ContentViewSet, basename='content')
+
 urlpatterns = [
-    path('api/content/', ContentApiView.as_view(), name='content_list')
-]
+    path('', include(router.urls)),
+    ]

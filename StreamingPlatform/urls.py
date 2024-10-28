@@ -22,9 +22,7 @@ from StreamingPlatform import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('content.urls', )),
-    # path('comments/', include('comments.urls','comments')),
-
+    path('api/', include('content.urls')),
 ]
 # URL-паттерн для обслуживания медиа-файлов.
 if settings.DEBUG:

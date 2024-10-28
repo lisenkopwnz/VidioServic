@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.http import JsonResponse
 
+from content.manager import PersonManager
 from content.models.model_category import Category
 from content.services import slug_generation
 
@@ -54,6 +55,8 @@ class Content(models.Model):
     author_content = models.ForeignKey(get_user_model(),
                                        on_delete=models.CASCADE,
                                        related_name="author")
+
+    objects = PersonManager()
 
     class Meta:
         verbose_name = "Контент"
