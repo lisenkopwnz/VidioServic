@@ -5,8 +5,12 @@ from django.utils.translation import gettext_lazy as _
 from accounts.models import Profile, User
 from django.contrib.auth.admin import UserAdmin
 
+
 User = get_user_model()
-admin.site.unregister(User)
+
+# Проверка, зарегистрирована ли модель User
+if admin.site.is_registered(User):
+    admin.site.unregister(User)
 
 
 class ProfileAdmin(admin.TabularInline):

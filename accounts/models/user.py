@@ -1,13 +1,13 @@
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    PermissionsMixin,
-    Group, Permission
-)
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from accounts.managers.user_manager import UserManager
 from django.utils import timezone
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    Group, Permission
+)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -117,4 +117,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name}|{self.last_name}"
 
     def __str__(self):
-        return f'{self.get_full_name} | {self.pk}'
+        # return f'{self.get_full_name} | {self.pk}'
+
+        telephone = self.telephone if self.telephone else "No phone"
+        role = self.get_user_role_display()  # Получаем текстовое представление роли
+        return f'{self.get_full_name} | {self.pk} | {role} | {telephone}'
