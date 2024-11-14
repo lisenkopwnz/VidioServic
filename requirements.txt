@@ -53,3 +53,5 @@ typing_extensions==4.12.2
 django-filter==24.3
 uritemplate==4.1.1
 urllib3==2.2.3
+elasticsearch==8.15.1
+django-elasticsearch-dsl==8.0

@@ -114,15 +114,16 @@ WSGI_APPLICATION = 'StreamingPlatform.wsgi.application'
 def is_postgres_available():
     try:
         conn = psycopg2.connect(
-            dbname=env.str('PG_DATABASE', 'postgres'),
-            user=env.str('PG_USER', 'postgres'),
-            password=env.str('PG_PASSWORD', 'postgres'),
-            host=env.str('DB_HOST', 'localhost'),
+            dbname=env.str('DB_NAME', 'platform_base'),
+            user=env.str('DB_USERNAME', 'postgres'),
+            password=env.str('DB_PASSWORD', '27Fa00'),
+            host=env.str('DB_HOST', 'db'),  # Используйте имя контейнера db
             port=env.int('DB_PORT', 5432),
         )
         conn.close()
         return True
-    except psycopg2.OperationalError:
+    except psycopg2.OperationalError as e:
+        print(f"Ошибка подключения к базе данных: {e}")
         return False
 
 # Настройка баз данных с проверкой доступности PostgreSQL

@@ -14,4 +14,7 @@ def slug_generation(size_slug: int) -> str:
 def user_status_subscription(user):
     """Функция возвращает статус подписки клиента,
         если подпика активна возвращает True ,в противном случае False"""
+    if not user.is_authenticated:
+        return False
+
     return user.profile.subscription_active
