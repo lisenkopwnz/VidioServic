@@ -3,6 +3,7 @@ import os
 from datetime import timedelta
 import environ
 import psycopg2
+import logging.config
 
 # region ---------------------- BASE CONFIGURATION -----------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
     # endregion --------------------------------------------------
 
     'drf_spectacular',  # всегда указывать после всех других созданных приложений проекта или же в конце
+    'django_elasticsearch_dsl',
 ]
 
 # region -------------------- MD & TEMP & WSGI & VALIDATORS & URLCONF -----------------------
@@ -260,3 +262,49 @@ AUTH_USER_MODEL = 'accounts.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = ('accounts.backends.AuthBackend',)
 
+# region ---------------------- LOGGING_CONFIG_SETTINGS ----------------------------------------------
+LOGGING_CONFIG = None
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'duration_request_view.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'duration_request_view': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+})
+# endregion ------------------------------------------------------------------------------------
+
+# region ---------------------- ELASTICSEARCH_SETTINGS ----------------------------------------------
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': ['http://elasticsearch:9200'],  # Правильный ключ для указания хоста
+    }
+}
+# endregion ------------------------------------------------------------------------------------

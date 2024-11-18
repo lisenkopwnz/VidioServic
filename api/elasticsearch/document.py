@@ -1,67 +1,67 @@
+import logging
+
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
-from django.contrib.auth import get_user_model
+from elasticsearch_dsl import analyzer
 
 from StreamingPlatform import settings
-from api.elasticsearch.analysis import analysis_settings
+from content.models.model_category import Category
 from content.models.model_content import Content
 
+logger = logging.getLogger('duration_request_view')
 
-# Регистрация документа для индексации модели Content
+russian_analyzer = analyzer(
+    'russian',
+    tokenizer="standard",
+    filter=["lowercase", "stop", "snowball"]
+)
+
 @registry.register_document
 class ContentDocument(Document):
     """
-    Индекс для модели Content.
+    Документ для модели Content, который будет индексироваться в Elasticsearch.
     """
+    title = fields.TextField(attr='title', fields={'raw': fields.KeywordField()})
+    description = fields.TextField(attr='description', analyzer=russian_analyzer)
+    preview_image = fields.KeywordField(attr='get_preview_image_url')
+    slug = fields.KeywordField(attr='slug')
+    pub_date_time = fields.DateField(attr='pub_date_time')
+    is_private = fields.BooleanField(attr='is_private')
 
-    # Поля для индексации
-    title = fields.TextField(
-        fields={'raw': fields.KeywordField()},
-    )
-    description = fields.TextField()
-    content = fields.KeywordField()
-    preview_image = fields.KeywordField()
-    slug = fields.KeywordField()
-    pub_date_time = fields.DateField()
-    is_private = fields.BooleanField()
-    categories_content = fields.TextField(multi=True)
+    # Связь ManyToMany с категориями, индексируем как вложенные объекты
+    categories_content = fields.NestedField(properties={
+        'name': fields.TextField(attr='name')
+    })
+
+    # Данные об авторе контента
     author_content = fields.ObjectField(properties={
-        'username': fields.KeywordField(),  # Убираем остальные поля и оставляем только username
+        'username': fields.KeywordField(attr='username'),
+        'email': fields.KeywordField(attr='email')
     })
 
     class Index:
-        # Имя индекса в Elasticsearch
+        # Название индекса Elasticsearch
         name = 'content'
-        # Настройки индекса (необязательно, но полезно для производительности)
-        # Должны во время развертывания на рабочем сервере быть изменены для отказоустойчивости
-        settings = {
-            'number_of_shards': 1,
-            'number_of_replicas': 0,
-            'analysis': analysis_settings
-        }
+
 
     class Django:
-        model = Content  # Модель, с которой связан этот документ
-        # Связанные модели
-        related_models = [get_user_model()]
+        model = Content  # Модель, связанная с этим документом
+
+
 
     @staticmethod
-    def prepare_categories_content(instance):
-        # Преобразуем категории в список строк (имена категорий)
-        return [category.name for category in instance.categories_content.all()]
-
-    @staticmethod
-    def prepare_content(instance):
+    def get_instances_from_related(self, related_instance):
         """
-        Возвращаем абсолютный URL к видеофайлу.
-        Формируем полный URL, используя MEDIA_URL.
+        Эта функция нужна для того, чтобы связать категории с контентом.
+        Она ищет все экземпляры контента, связанные с конкретной категорией.
         """
-        if instance.content:
-            return settings.MEDIA_URL + instance.content.name
-        return None
+        if isinstance(related_instance, Category):
+            # Используем обратную связь через Content, чтобы получить все контенты, связанные с категорией.
+            return Content.objects.filter(categories_content=related_instance)
+        return []
 
-    @staticmethod
-    def prepare_preview_image(instance):
+
+    def prepare_preview_image(self, instance):
         """
         Возвращаем абсолютный URL к изображению превью.
         Формируем полный URL, используя MEDIA_URL.

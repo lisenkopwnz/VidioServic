@@ -7,10 +7,9 @@ class ContentDocumentSerializer(serializers.Serializer):
     """
     title = serializers.CharField()
     description = serializers.CharField()
-    content = serializers.CharField()
     preview_image = serializers.CharField()
     slug = serializers.CharField()
-    pub_date_time = serializers.DateField()
+    pub_date_time = serializers.DateTimeField()
     is_private = serializers.BooleanField()
     categories_content = serializers.ListField(child=serializers.CharField())
     author_content = serializers.CharField(source='author_content.username')
@@ -19,7 +18,6 @@ class ContentDocumentSerializer(serializers.Serializer):
         fields = (
             'title',
             'description',
-            'content',
             'preview_image',
             'slug',
             'pub_date_time',

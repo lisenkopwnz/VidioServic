@@ -1,5 +1,6 @@
 from rest_framework.pagination import PageNumberPagination
 
+
 class ContentPaginator(PageNumberPagination):
     page_size = 50  # Количество элементов на одной странице
     max_page_size = 100  # Максимальный размер страницы
@@ -47,4 +48,5 @@ class ContentPaginator(PageNumberPagination):
         Возвращает номер текущей страницы, учитывая параметр запроса.
         """
         page = request.query_params.get(self.page_query_param, 1)
+
         return int(page)

@@ -35,28 +35,27 @@ services:
       timeout: 5s
       retries: 5
 
-# redis:
-# image: redis:7
-# ports:
-# - "6379:6379"
-# networks:
-# - backend
+  elasticsearch:
+    image: bitnami/elasticsearch:8.7.0
+    container_name: elasticsearch-platform
+    environment:
+      - discovery.type=single-node
+      #- ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 10s
+      retries: 5
 
-# celery:
-# build: .
-# command: celery -A config worker -l info
-# volumes:
-# - .:/code
-# env_file:
-# - ./.env
-# depends_on:
-# - db
-# - redis
-# - web
-# networks:
-# - backend
 volumes:
   postgres_data:
+  elasticsearch_data:  # Том для данных Elasticsearch
 
 networks:
   backend:
