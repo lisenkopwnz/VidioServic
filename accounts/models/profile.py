@@ -66,6 +66,7 @@ class Profile(models.Model):
         default=False
     )
 
+ 
     class Meta:
         verbose_name = _("Профиль")
         verbose_name_plural = _("Профили")
