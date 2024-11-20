@@ -13,4 +13,4 @@ router.register(r'content', ContentViewSet, basename='content')
 urlpatterns = [
     path('', include(router.urls)),
     path('search/', ElasticsearchView.as_view(), name='search')
-    ]
+]

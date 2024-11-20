@@ -2,8 +2,7 @@
 
 # Ожидание запуска PostgreSQL
 echo "Ожидание запуска PostgreSQL на $DB_HOST:$DB_PORT..."
-
-timeout=60  # Увеличиваем время ожидания до 60 секунд
+timeout=240
 
 while ! nc -z $DB_HOST $DB_PORT; do
     sleep 0.1
@@ -32,6 +31,17 @@ fi
 
 if ! python manage.py migrate; then
     echo "Ошибка: Не удалось применить миграции"
+    exit 1
+fi
+
+# Временная задержка перед созданием индекса в Elasticsearch (4 минуты)
+echo "Ожидаю 4 минуты перед созданием индекса в Elasticsearch..."
+sleep 240
+
+# Создание индекса в Elasticsearch
+echo "Создаю индекс в Elasticsearch..."
+if ! python manage.py search_index --create; then
+    echo "Ошибка: Не удалось создать индекс в Elasticsearch"
     exit 1
 fi
 

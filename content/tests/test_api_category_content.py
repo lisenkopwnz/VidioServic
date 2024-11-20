@@ -43,5 +43,3 @@ class YourModelTests(APITestCase):
         response = self.client.get('api/content/')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-

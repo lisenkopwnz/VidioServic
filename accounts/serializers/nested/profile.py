@@ -12,6 +12,7 @@ class ProfileShortSerializer(serializers.ModelSerializer):
             'country',
         )
 
+
 class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:

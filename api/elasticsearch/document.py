@@ -1,5 +1,4 @@
 import logging
-
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer
@@ -15,6 +14,7 @@ russian_analyzer = analyzer(
     tokenizer="standard",
     filter=["lowercase", "stop", "snowball"]
 )
+
 
 @registry.register_document
 class ContentDocument(Document):
@@ -43,14 +43,11 @@ class ContentDocument(Document):
         # Название индекса Elasticsearch
         name = 'content'
 
-
     class Django:
         model = Content  # Модель, связанная с этим документом
 
-
-
     @staticmethod
-    def get_instances_from_related(self, related_instance):
+    def get_instances_from_related(related_instance):
         """
         Эта функция нужна для того, чтобы связать категории с контентом.
         Она ищет все экземпляры контента, связанные с конкретной категорией.
@@ -59,7 +56,6 @@ class ContentDocument(Document):
             # Используем обратную связь через Content, чтобы получить все контенты, связанные с категорией.
             return Content.objects.filter(categories_content=related_instance)
         return []
-
 
     def prepare_preview_image(self, instance):
         """

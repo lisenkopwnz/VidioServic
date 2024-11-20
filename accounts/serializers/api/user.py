@@ -10,6 +10,7 @@ from accounts.serializers.nested.profile import ProfileShortSerializer, ProfileU
 User = get_user_model()
 # region ------------------- AUTHENTICATION AND AUTHORISATION -------------------
 
+
 class RegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
     email = serializers.EmailField()
@@ -61,6 +62,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 # region ------------------- PASSWORD CHANGING -----------------------------------
 
+
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(write_only=True)
     new_password = serializers.CharField(write_only=True)
@@ -91,6 +93,8 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 # endregion ---------------------------------------------------------------------------
 
 # region ------------------- USER (USER_UPDATE) AND PROFILE SERIALIZERS ----------------------
+
+
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileShortSerializer()
 
@@ -107,6 +111,7 @@ class UserSerializer(serializers.ModelSerializer):
             'profile',
             'created_at',
         )
+
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     profile = ProfileUpdateSerializer()
@@ -129,7 +134,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             instance = super().update(instance, validated_data)
 
-        #Update профиля
+        # Update профиля
         self._update_profile(profile=instance.profile, data=profile_data)
         return instance
 
@@ -140,4 +145,4 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         profile_serializer.is_valid(raise_exception=True)
         profile_serializer.save()
 
-#endregion --------------------------------------------------------------------
+# endregion --------------------------------------------------------------------

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from content.models.model_content import Content
 
+
 class ContentSerializer(serializers.ModelSerializer):
     """
     Сериализатор для модели `Content`. Преобразует объекты контента в формат JSON и наоборот.

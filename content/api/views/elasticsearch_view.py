@@ -1,5 +1,4 @@
-import logging
-
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
@@ -8,23 +7,27 @@ from api.elasticsearch.serializer import ContentDocumentSerializer
 from content.paginators import ContentPaginator
 from content.services import user_status_subscription
 
-logger = logging.getLogger('duration_request_view')
+
+@extend_schema_view(
+    list=extend_schema(
+        summary='Получить список контента',
+        description='Получить список контента из Elasticsearch',
+        tags=['Контент']
+    ),
+)
 class ElasticsearchView(ListAPIView):
     pagination_class = ContentPaginator
     serializer_class = ContentDocumentSerializer
-
 
     def get_queryset(self):
         """
         Переопределяем метод для фильтрации данных по полю `is_private`
         на основе статуса подписки пользователя.
         """
-        queryset = ContentDocument.search().filter("term",
-                                            is_private=user_status_subscription(self.request.user))
+        queryset = ContentDocument.search().filter("term", is_private=user_status_subscription(self.request.user))
         return queryset
 
-    def search(self,queryset):
-
+    def search(self, queryset):
         # Получаем параметры фильтрации из запроса
         categories = self.request.query_params.get('categories_content', None)
         search_term = self.request.query_params.get('search', None)

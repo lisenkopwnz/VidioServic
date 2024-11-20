@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    command: /bin/bash -c "python manage.py runserver 0.0.0.0:8000"
     container_name: web-online-platform
     volumes:
       - .:/code
@@ -13,8 +13,13 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - elasticsearch
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://elasticsearch:9200"]
+      interval: 10s
+      retries: 5
 
   db:
     image: postgres:16-alpine
@@ -40,7 +45,6 @@ services:
     container_name: elasticsearch-platform
     environment:
       - discovery.type=single-node
-      #- ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
     ports:
       - "9200:9200"
       - "9300:9300"

@@ -5,6 +5,7 @@ import environ
 import psycopg2
 import logging.config
 
+
 # region ---------------------- BASE CONFIGURATION -----------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -22,7 +23,6 @@ CORS_ALLOW_HEADERS = ['*']
 CSRF_COOKIE_SECURE = False
 # endregion ---------------------------------------------------------------------------------
 
-
 INSTALLED_APPS = [
     # region ----------------- BASE DJANGO PACKAGES -----------
     'django.contrib.admin',
@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # endregion ------------------------------------------------
 
-    # region ----------------- REST FRAMEWORK MODULES -----------
+    # region ----------------- REST FRAMEWORK MODULES ---------
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
@@ -78,8 +78,7 @@ ROOT_URLCONF = 'StreamingPlatform.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -113,6 +112,8 @@ WSGI_APPLICATION = 'StreamingPlatform.wsgi.application'
 
 # region ---------------------- DATABASE ----------------------------------------------------
 # Функция проверки доступности PostgreSQL
+
+
 def is_postgres_available():
     try:
         conn = psycopg2.connect(
@@ -127,6 +128,7 @@ def is_postgres_available():
     except psycopg2.OperationalError as e:
         print(f"Ошибка подключения к базе данных: {e}")
         return False
+
 
 # Настройка баз данных с проверкой доступности PostgreSQL
 if is_postgres_available():
@@ -159,7 +161,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-
     ),
 
     'DEFAULT_PARSER_CLASSES': (
@@ -221,9 +222,9 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {},
 }
-# endregion -------------------------------------------------------------------------=========
+# endregion -------------------------------------------------------------------------
 
-# region ---------------------- SPECTACULLAR  SETTINGS  --------------------------------------
+# region ---------------------- SPECTACULAR SETTINGS --------------------------------------
 SPECTACULAR_SETTINGS = {
     'TITLE': 'STREAMING PLATFORM',
     'DESCRIPTION': 'Проект, который должен заменить YouTube и стать лучше него в СНГ',
@@ -244,7 +245,7 @@ SPECTACULAR_SETTINGS = {
 }
 # endregion -------------------------------------------------------------------
 
-# region ---------------------- LOVCALIZATION ------------------------------------------------
+# region ---------------------- LOCALIZATION ------------------------------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -262,7 +263,7 @@ AUTH_USER_MODEL = 'accounts.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = ('accounts.backends.AuthBackend',)
 
-# region ---------------------- LOGGING_CONFIG_SETTINGS ----------------------------------------------
+# region ---------------------- LOGGING CONFIG SETTINGS ----------------------------------------------
 LOGGING_CONFIG = None
 logging.config.dictConfig({
     'version': 1,
@@ -301,7 +302,7 @@ logging.config.dictConfig({
 })
 # endregion ------------------------------------------------------------------------------------
 
-# region ---------------------- ELASTICSEARCH_SETTINGS ----------------------------------------------
+# region ---------------------- ELASTICSEARCH SETTINGS ----------------------------------------------
 ELASTICSEARCH_DSL = {
     'default': {
         'hosts': ['http://elasticsearch:9200'],  # Правильный ключ для указания хоста

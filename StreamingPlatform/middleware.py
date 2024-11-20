@@ -7,6 +7,7 @@ logger = logging.getLogger('duration_request_view')
 class LoggingMiddleware:
     """ Middleware использунтся для логирования продолжительности запросов к функциям
         и классам представления в приложениях. """
+
     def __init__(self, get_response: callable):
         """
         Инициализация middleware.
