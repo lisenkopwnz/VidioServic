@@ -1,5 +1,6 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from api.elasticsearch.document import ContentDocument
@@ -18,6 +19,7 @@ from content.services import user_status_subscription
 class ElasticsearchView(ListAPIView):
     pagination_class = ContentPaginator
     serializer_class = ContentDocumentSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         """

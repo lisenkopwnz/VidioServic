@@ -5,6 +5,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from content.api.serializers.serializer_content import ContentSerializer
 from content.models.model_content import Content
+from content.permissions import ContentViewSetPermissions
 from content.services import user_status_subscription
 
 
@@ -55,6 +56,7 @@ class ContentViewSet(mixins.CreateModelMixin,
 
     serializer_class = ContentSerializer
     lookup_field = 'slug'
+    pagination_class = [ContentViewSetPermissions]
 
     def get_queryset(self):
         """

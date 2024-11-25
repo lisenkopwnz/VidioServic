@@ -23,7 +23,7 @@ class ContentDocument(Document):
     """
     title = fields.TextField(attr='title', fields={'raw': fields.KeywordField()})
     description = fields.TextField(attr='description', analyzer=russian_analyzer)
-    preview_image = fields.KeywordField(attr='get_preview_image_url')
+    preview_image = fields.KeywordField(attr='preview_image_url')
     slug = fields.KeywordField(attr='slug')
     pub_date_time = fields.DateField(attr='pub_date_time')
     is_private = fields.BooleanField(attr='is_private')
