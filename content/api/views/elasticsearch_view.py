@@ -1,4 +1,5 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
+from elasticsearch_dsl import Q
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -51,7 +52,19 @@ class ElasticsearchView(ListAPIView):
 
         # Применяем фильтрацию по поисковому запросу
         if search_term:
-            queryset = queryset.query('multi_match', query=search_term, fields=['title', 'description'])
+            # Создаем запрос с точным совпадением и fuzziness
+            query = Q(
+                "bool",
+                should=[
+                    # Точное совпадение с высоким приоритетом
+                    Q("match_phrase", title={"query": search_term, "boost": 2.0}),
+                    Q("match_phrase", description={"query": search_term, "boost": 1.5}),
+                    # Фаззи-поиск с меньшим приоритетом
+                    Q("multi_match", query=search_term, fields=["title^1", "description^0.5"], fuzziness="AUTO")
+                ],
+                minimum_should_match=1  # Требуем хотя бы одно совпадение
+            )
+            queryset = queryset.query(query)
 
         return queryset
 
