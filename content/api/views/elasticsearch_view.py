@@ -18,19 +18,38 @@ from content.services import user_status_subscription
     ),
 )
 class ElasticsearchView(ListAPIView):
+    """
+    Представление для поиска и фильтрации контента в Elasticsearch.
+
+    Это представление позволяет:
+    - Получить список контента с поддержкой пагинации.
+    - Выполнять фильтрацию по категориям.
+    - Искать контент по ключевым словам с использованием полнотекстового поиска.
+    """
+
     pagination_class = ContentPaginator
     serializer_class = ContentDocumentSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
         """
-        Переопределяем метод для фильтрации данных по полю `is_private`
-        на основе статуса подписки пользователя.
+        Формирует базовый запрос для получения контента из Elasticsearch.
+
+        Включает фильтрацию по полю `is_private` на основе статуса подписки пользователя.
         """
-        queryset = ContentDocument.search().filter("term", is_private=user_status_subscription(self.request.user))
+        queryset = ContentDocument.search().filter(
+            "term", is_private=user_status_subscription(self.request.user)
+        )
         return queryset
 
     def search(self, queryset):
+        """
+        Применяет фильтрацию и поиск по запросу.
+
+        Фильтры:
+        - По категориям (`categories_content`): принимает список категорий через запятую.
+        - Поисковый запрос (`search`): ищет по полям `title` и `description` с поддержкой fuzzy поиска.
+        """
         # Получаем параметры фильтрации из запроса
         categories = self.request.query_params.get('categories_content', None)
         search_term = self.request.query_params.get('search', None)
@@ -69,11 +88,21 @@ class ElasticsearchView(ListAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
+        """
+        Обрабатывает запрос на получение списка контента.
+
+        - Выполняет поиск и фильтрацию с помощью метода `search`.
+        - Формирует ответ с пагинацией или без нее.
+        """
+        # Применяем поиск и фильтрацию
         queryset = self.search(self.get_queryset())
+
+        # Проверяем, требуется ли пагинация
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
+        # Если пагинация не требуется, возвращаем полный список
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

@@ -6,6 +6,7 @@ from accounts.serializers.views import users
 #     TokenRefreshView,
 # )
 
+app_name = "accounts"
 
 urlpatterns = [
     path('users/reg', users.RegistrationView.as_view(), name='reg'),

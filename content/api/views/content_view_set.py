@@ -56,7 +56,7 @@ class ContentViewSet(mixins.CreateModelMixin,
 
     serializer_class = ContentSerializer
     lookup_field = 'slug'
-    pagination_class = [ContentViewSetPermissions]
+    permission_classes = [ContentViewSetPermissions]
 
     def get_queryset(self):
         """
