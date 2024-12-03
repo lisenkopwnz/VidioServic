@@ -59,7 +59,7 @@ services:
 
 volumes:
   postgres_data:
-  elasticsearch_data:  # Том для данных Elasticsearch
+  elasticsearch_data:
 
 networks:
   backend:
