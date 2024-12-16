@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from content.models.model_content import Content
+from statistic.services import SignificanceRating
 
 
 class Statistic(models.Model):
@@ -26,6 +27,26 @@ class Statistic(models.Model):
     number_of_dislikes = models.PositiveIntegerField(default=0, verbose_name='Количество дизлайков')
     number_of_comments = models.PositiveIntegerField(default=0, verbose_name='Количество комментариев')
     number_of_views = models.PositiveBigIntegerField(default=0, verbose_name='Количество просмотров')
+    __rating_content = None
+
+    @property
+    def rating(self):
+        """Рейтинг вкдючает лайки, дизлайки, коментарии и просмотры"""
+
+        if self.__rating_content is None:
+            self.__rating_content = SignificanceRating(self.number_of_likes,
+                                                       self.number_of_dislikes,
+                                                       self.number_of_comments,
+                                                       self.number_of_views)
+        else:
+            self.__rating_content.reset(
+                likes=self.number_of_likes,
+                dislikes=self.number_of_dislikes,
+                comments=self.number_of_comments,
+                views=self.number_of_views
+            )
+
+        return self.__rating_content.calculate()
 
     def __str__(self):
         return f'{self.content}'

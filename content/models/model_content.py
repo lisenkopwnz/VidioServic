@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.http import JsonResponse
+from taggit.managers import TaggableManager
 
 from content.manager import PersonManager
 from content.models.model_category import Category
@@ -52,6 +53,9 @@ class Content(models.Model):
     categories_content = models.ManyToManyField(Category,
                                                 related_name='categories_content',
                                                 blank=True)
+    tags = TaggableManager(blank=True,
+                           verbose_name="теги",
+                           related_name="posts")
     author_content = models.ForeignKey(get_user_model(),
                                        on_delete=models.CASCADE,
                                        related_name="author")

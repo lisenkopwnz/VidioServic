@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 
     'drf_spectacular',  # всегда указывать после всех других созданных приложений проекта или же в конце
     'django_elasticsearch_dsl',
+    'taggit'
 ]
 
 # region -------------------- MD & TEMP & WSGI & VALIDATORS & URLCONF -----------------------
