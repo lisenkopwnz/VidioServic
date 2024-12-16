@@ -45,7 +45,6 @@ class Statistic(models.Model):
                 comments=self.number_of_comments,
                 views=self.number_of_views
             )
-
         return self.__rating_content.calculate()
 
     def __str__(self):
