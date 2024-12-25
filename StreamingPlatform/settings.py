@@ -276,10 +276,16 @@ logging.config.dictConfig({
         },
     },
     'handlers': {
-        'file': {
+        'duration_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': 'duration_request_view.log',
+            'formatter': 'verbose',
+        },
+        'recommendation_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'recommendation_system_errors.log',
             'formatter': 'verbose',
         },
         'console': {
@@ -290,8 +296,13 @@ logging.config.dictConfig({
     },
     'loggers': {
         'duration_request_view': {
-            'handlers': ['file'],
+            'handlers': ['duration_file'],
             'level': 'INFO',
+            'propagate': False,
+        },
+        'recommendation_system_errors':{
+            'handlers': ['recommendation_file'],
+            'level': 'ERROR',
             'propagate': False,
         },
         'django': {
