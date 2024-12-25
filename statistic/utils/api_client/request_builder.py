@@ -1,8 +1,9 @@
 import os
 from typing import Dict, Any
-
 import httpx
 from dotenv import load_dotenv
+
+from statistic.utils.api_client.exceptions import ApiClientException
 
 load_dotenv()
 
@@ -51,18 +52,25 @@ class HttpxClientBuilder:
         :param data: данные для отправки.
         :return: ответ от сервера.
         """
+        url = self._build_url(endpoint)
         try:
-            url = self._build_url(endpoint)
             headers = HttpxClientBuilder.__get_api_key()
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(url, json=data, headers=headers)
                 response.raise_for_status()  #проверка на успешный статус (2xx)
                 return response.json()
-        except httpx.TimeoutException:
-            pass
+        except httpx.TimeoutException as e:
+            raise ApiClientException(
+                message=f'Ошибка: превышен тайм-аут при подключении или ожидании ответа: {str(e)}',
+                error_code="TIMEOUT",
+            )
         except httpx.RequestError as e:
-            pass
+            raise ApiClientException(
+                f'Ошибка запроса: {str(e)}',
+                error_code="REQUEST_ERROR",
+            )
         except httpx.HTTPStatusError as e:
-            pass
-
-        return None
+            raise ApiClientException(
+                f'Ошибка HTTP: {str(e)}',
+                error_code=e.response.status_code,
+            )
