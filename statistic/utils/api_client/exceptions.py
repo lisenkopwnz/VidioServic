@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 logger = logging.getLogger('recommendation_system_errors')
 
@@ -31,7 +32,7 @@ class ApiClientException(Exception):
     """
     message = ErrorTranslatorDescriptor("Неудалось загрузить рекомендации")
 
-    def __init__(self, message: str, error_code: int = None):
+    def __init__(self, message: str, error_code: Any = None):
         super().__init__(message)
         self.error_code = error_code
         self.message = message
