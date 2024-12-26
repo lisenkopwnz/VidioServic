@@ -11,10 +11,10 @@ class HttpxClientBuilder:
     def __init__(
             self,
             base_url: str,
-            timeout_connect: int = 5,
-            timeout_read: int = 10,
-            timeout_write:int = 5.0,
-            verify_ssl:bool = True
+            timeout_connect: int,
+            timeout_read: int,
+            timeout_write: int,
+            verify_ssl: bool
             ):
         """
         Инициализация HTTPX клиента с базовым URL и временем ожидания.
@@ -52,8 +52,8 @@ class HttpxClientBuilder:
         :param data: данные для отправки.
         :return: ответ от сервера.
         """
-        url = self._build_url(endpoint)
         try:
+            url = self._build_url(endpoint)
             headers = HttpxClientBuilder.__get_api_key()
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(url, json=data, headers=headers)
