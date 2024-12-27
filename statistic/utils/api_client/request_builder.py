@@ -58,7 +58,7 @@ class HttpxClientBuilder:
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(url, json=data, headers=headers)
                 response.raise_for_status()  #проверка на успешный статус (2xx)
-                return response.json()
+                return response
         except httpx.TimeoutException as e:
             raise ApiClientException(
                 message=f'Ошибка: превышен тайм-аут при подключении или ожидании ответа: {str(e)}',

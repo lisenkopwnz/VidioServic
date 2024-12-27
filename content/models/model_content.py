@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db import models
-from django.http import JsonResponse
+from django.db import models, transaction
 from taggit.managers import TaggableManager
 
 from content.manager import PersonManager
@@ -8,6 +7,8 @@ from content.models.model_category import Category
 from content.services import slug_generation
 
 from PIL import Image
+
+from statistic.models import Statistic
 
 
 class Content(models.Model):
@@ -71,26 +72,44 @@ class Content(models.Model):
 
     def save(self, *args, **kwargs):
         """ Переопределяем метод save из базового класса модель для автоиатического добавления slug"""
+        created = not self.pk
+
         if not self.slug:
             self.slug = slug_generation(size_slug=150)
-        super().save(*args, **kwargs)
 
-        self.cropping_image()
+        with transaction.atomic():
+            super().save(*args, **kwargs)
+            self.cropping_image()
+            if created:
+                Statistic.objects.create(content=self,author=self.author_content)
 
     def cropping_image(self):
-        """Данный метод используется для приведения изображения к соотношению сторон 9x12"""
+        """
+        Приводит изображение к соотношению сторон 9x12.
+        """
+        if not self.preview_image or not self.preview_image.name:
+            return  # Если изображение отсутствует, ничего не делаем
 
-        if self.preview_image and self.preview_image.name:
-            try:
-                image = Image.open(self.preview_image.path)
+        try:
+            # Открываем изображение
+            with Image.open(self.preview_image.path) as image:
                 width, height = image.size
 
+                # Вычисляем новую ширину для соотношения 9x12
                 new_width = int(height * (9 / 12))
-                image = image.resize((new_width, height), Image.ANTIALIAS)
 
+                # Изменяем размер изображения
+                resized_image = image.resize((new_width, height), Image.Resampling.LANCZOS)
+
+                # Вычисляем координаты для обрезки
                 left = (new_width - height * (9 / 12)) / 2
-                image = image.crop((left, 0, left + height * (9 / 12), height))
+                right = left + height * (9 / 12)
 
-                image.save(self.preview_image.path)
-            except Exception as e:
-                return JsonResponse({'Ошибка при обработке изображения': str(e)}, status=400)
+                # Обрезаем изображение
+                cropped_image = resized_image.crop((left, 0, right, height))
+
+                # Сохраняем изображение с высоким качеством
+                cropped_image.save(self.preview_image.path, quality=95)
+
+        except Exception as e:
+            raise ValueError(f"Ошибка при обработке изображения: {str(e)}")
