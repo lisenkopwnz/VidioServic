@@ -9,6 +9,7 @@ from content.models.model_content import Content
 class RecommendationDTO:
     """(Data Transfer Object) — класс, служащий для подготовки данных для дальнейшего использования
         в сервисе рекомендаций """
+    slug: str
     title: str
     description: str
     pub_date_time: datetime
@@ -19,10 +20,19 @@ class RecommendationDTO:
     def to_dict(self: Self)-> dict:
         """Возращает обект как словарь с корректной сериаизацией."""
         data = asdict(self)
-        data["pub_date_time"] = self.pub_date_time.isoformat()  # Преобразование даты для дальнейшей сериализации
+        # Преобразование даты для дальнейшей сериализации
+        data["pub_date_time"] = self.pub_date_time.isoformat()
         return data
 
     @staticmethod
     def create(content: Content) -> "RecommendationDTO":
         """Метод используется для создания обекта dataclass """
-        raise NotImplementedError
+        return RecommendationDTO(
+            slug=content.slug,
+            title=content.title,
+            description=content.description,
+            pub_date_time=content.pub_date_time,
+            rating=content.reating,
+            categories_content=content.categories_content,
+            tags=content.tags
+        )

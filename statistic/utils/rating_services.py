@@ -2,7 +2,9 @@ import os
 
 
 class SignificanceRating:
-
+    """
+    Класс для расчета значимости (рейтинга) видео на основе лайков, дизлайков, комментариев и просмотров.
+    """
     w_likes: float = float(os.getenv('W_LIKES', 1))
     w_dislikes: float = float(os.getenv('W_DISLIKES', -1))
     w_comments: float = float(os.getenv('W_COMMENTS', 0.5))
