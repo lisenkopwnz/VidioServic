@@ -1,12 +1,12 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins
-from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.viewsets import GenericViewSet
 
+from common.utils.common_services import user_status_subscription
 from content.api.serializers.serializer_content import ContentSerializer
 from content.models.model_content import Content
 from content.permissions import ContentViewSetPermissions
-from content.services import user_status_subscription
+
 
 
 @extend_schema_view(
@@ -34,14 +34,12 @@ from content.services import user_status_subscription
 class ContentViewSet(mixins.CreateModelMixin,
                      mixins.UpdateModelMixin,
                      mixins.DestroyModelMixin,
-                     RetrieveModelMixin,
                      GenericViewSet):
     """
     Представление API для работы с моделью `Content`. Реализует стандартные методы:
     - `create` — создание нового контента;
     - `update` — обновление существующего контента;
     - `destroy` — удаление контента;
-    - `retrieve` — получение данных конкретного контента по полю `slug`.
 
     Этот `ViewSet` предоставляет функциональность для создания, обновления,
     удаления и получения экземпляров контента.

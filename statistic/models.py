@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from content.models.model_content import Content
-from statistic.utils.services import SignificanceRating
+from statistic.utils.rating_services import SignificanceRating
 
 
 class Statistic(models.Model):

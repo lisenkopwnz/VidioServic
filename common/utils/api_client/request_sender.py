@@ -1,8 +1,9 @@
 from typing import Dict, Any
 
+from StreamingPlatform.settings import RECOMMENDATION_SERVICE_URL
+from common.utils.api_client.base_api_client import AbstractApiClient
+from common.utils.api_client.request_builder import HttpxClientBuilder
 from content.models.model_content import Content
-from statistic.utils.api_client.base_api_client import AbstractApiClient
-from statistic.utils.api_client.request_builder import HttpxClientBuilder
 
 
 class ContentBasedRecommendationsClient(AbstractApiClient):
@@ -15,9 +16,9 @@ class ContentBasedRecommendationsClient(AbstractApiClient):
 
     Все параметры, кроме `base_url`, являются необязательными.
 
-    :param base_url: Базовый URL API (обязательный).
+    :param base_url: Базовый URL API (по умолчанию RECOMMENDATION_SERVICE_URL).
     :param endpoint: Конечный эндпоинт API (обязательный).
-    :param content: Экземпляр модели Content для которого будут извлекаться рекомендации (обязательный).
+    :param data: Данные которые будут отправленны (обязательный).
     :param timeout_connect: Время ожидания для установления соединения в секундах (по умолчанию 5).
     :param timeout_read: Время ожидания для чтения данных в секундах (по умолчанию 10).
     :param timeout_write: Время ожидания для записи данных в секундах (по умолчанию 5.0).
@@ -43,9 +44,9 @@ class ContentBasedRecommendationsClient(AbstractApiClient):
     """
     def __init__(
             self,
-            base_url: str,
             endpoint: str,
-            content: Content,
+            data: Dict[str:Any],
+            base_url: str = RECOMMENDATION_SERVICE_URL,
             timeout_connect: int = 5,
             timeout_read: int = 10,
             timeout_write: int = 5.0,
@@ -53,13 +54,9 @@ class ContentBasedRecommendationsClient(AbstractApiClient):
     ):
         self.client = HttpxClientBuilder(base_url,timeout_connect,timeout_read,timeout_write,verify_ssl)
         self.endpoint = endpoint
-        self.content = content
-
-    def _prepare_data(self)-> Dict[str:Any]:
-        """Создает класс RecommendationDTO который готовит данные для отправки"""
-        pass
+        self.data = data
 
     def post(self):
         """Отправляет запрос на API для получения рекомендаций """
-        response = self.client.send_post_request(self.endpoint,self._prepare_data())
+        response = self.client.send_post_request(self.endpoint,self.data)
         return response.json

@@ -5,7 +5,6 @@ import environ
 import psycopg2
 import logging.config
 
-
 # region ---------------------- BASE CONFIGURATION -----------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -14,6 +13,11 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
+# endregion --------------------------------------------------------------------------------
+
+# region ---------------------- RECOMMENDATION SERVICE-----------------------------------------
+RECOMMENDATION_SERVICE_URL = env.str('RECOMMENDATION_SERVICE_URL')
+API_KEY=env.str('API_KEY')
 # endregion --------------------------------------------------------------------------------
 
 # region ---------------------- CORS HEADERS -----------------------------------------------

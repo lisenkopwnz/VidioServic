@@ -1,13 +1,12 @@
-import os
 from typing import Dict, Any
 import httpx
-from dotenv import load_dotenv
 
-from statistic.utils.api_client.exceptions import ApiClientException
+from StreamingPlatform.settings import API_KEY
+from common.utils.api_client.exceptions import ApiClientException
 
-load_dotenv()
 
 class HttpxClientBuilder:
+    """Низкоуровневое API для создания запроса"""
     def __init__(
             self,
             base_url: str,
@@ -31,7 +30,13 @@ class HttpxClientBuilder:
 
     @staticmethod
     def __get_api_key():
-        api_key = os.getenv("API_KEY")
+        """
+            Формирует и возвращает заголовки HTTP-запроса с API-ключом для авторизации.
+
+            Этот метод создает заголовок `Authorization` с использованием API-ключа в формате `Bearer Token`.
+            API-ключ берется из глобальной переменной `API_KEY`.
+        """
+        api_key = API_KEY
         headers = {
             "Authorization": f"Bearer {api_key}"
         }

@@ -6,8 +6,8 @@ from rest_framework.response import Response
 
 from api.elasticsearch.document import ContentDocument
 from api.elasticsearch.serializer import ContentDocumentSerializer
+from common.utils.common_services import user_status_subscription
 from content.paginators import ContentPaginator
-from content.services import user_status_subscription
 
 
 @extend_schema_view(
