@@ -1,17 +1,19 @@
 from typing import Dict, List
 
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Prefetch
+from django.http import Http404
 from rest_framework import status
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, get_object_or_404
 from rest_framework.response import Response
 
+from comments.models import Comment
 from common.utils.api_client.data_preparer import RecommendationDTO
 from common.utils.api_client.exceptions import ApiClientException
 from common.utils.api_client.request_sender import ContentBasedRecommendationsClient
 from common.utils.common_services import user_status_subscription
 from content.api.serializers.serializer_content import ContentSerializer
+from content.models.model_category import Category
 from content.models.model_content import Content
-
 
 
 class ContentRetrieveView(RetrieveAPIView):
@@ -46,14 +48,24 @@ class ContentRetrieveView(RetrieveAPIView):
             recommendations = self._get_recommendations(instance)
             # Получаем список индетификаторов
             recommendations_slug = self._extract_list_from_dict(recommendations)
+            # Получаем Queryset, рекомендаций
+            recommendations = self._list_recommendations(recommendations_slug)
+            # Сериализуем список рекомендаций
+            serializer_recommendations = self.get_serializer(recommendations, many=True)
 
             # Формируем успешный ответ
             response_data = {
                 'video': serializer.data,
-                'recommendations': recommendations,
+                'recommendations': serializer_recommendations.data,
             }
             return Response(response_data, status=status.HTTP_200_OK)
 
+        except Http404:
+            # Возвращаем ответ с кодом 404, если объект не найден
+            return Response(
+                {"detail": "Запись не найдена."},
+                status=status.HTTP_404_NOT_FOUND
+            )
         except ApiClientException as e:
             # Возвращаем частичный ответ с данными контента и пустыми рекомендациями
             response_data = {
@@ -63,6 +75,33 @@ class ContentRetrieveView(RetrieveAPIView):
                 'error_code': e.error_code,
             }
             return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get_object(self, queryset:QuerySet=None)-> Content:
+        """
+         Возвращает объект по `pk` с оптимизацией запросов к базе данных.
+        """
+        queryset = queryset or self.get_queryset()
+        return get_object_or_404(
+            queryset.select_related('content_statistic', 'author_content__profile')
+            .prefetch_related(
+                Prefetch('comments', queryset=Comment.objects.select_related('author_comment')
+                         .only('comment', 'pub_date_time', 'author_comment__username')),
+                Prefetch('categories_content', queryset=Category.objects.only('name'))
+            )
+            .only(
+                'title', 'content', 'preview_image', 'description', 'slug', 'pub_date_time', 'is_private', 'tags',
+                'author_content__username', 'author_content__profile__user_photo',
+                'content_statistic__number_of_likes', 'content_statistic__number_of_dislikes',
+                'content_statistic__number_of_comments', 'content_statistic__number_of_views',
+            ),
+            pk=self.kwargs['pk']
+        )
+
+    def _list_recommendations(self,list_slug:List[str])-> QuerySet:
+        """Метод возращает список записей модели контент ,которые являются частью рекомендаций клиента"""
+        return (self.get_queryset().select_related('content_statistic')
+                .filter(slug__in=list_slug)
+                .only('title','preview_image','slug','content_statistic__number_of_views'))
 
     @staticmethod
     def _get_recommendations(instance: Content)-> Dict[str, List[str]]:
@@ -86,7 +125,6 @@ class ContentRetrieveView(RetrieveAPIView):
             return response
         except ApiClientException as e:
             raise
-
 
     def get_queryset(self) -> QuerySet[Content]:
         # Получаем статус подписки пользователя

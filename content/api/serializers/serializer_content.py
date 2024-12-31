@@ -1,27 +1,76 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
+
+from accounts.models import Profile
+from comments.models import Comment
+from content.models.model_category import Category
 from content.models.model_content import Content
+from statistic.models import Statistic
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели пользователя (`User`).
+    Используется для представления данных автора контента и авторов комментариев.
+    """
+    class Meta:
+        model = get_user_model()
+        fields = ['username']
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели профиля (`Profile`).
+    Используется для представления данных профиля автора контента.
+    """
+    class Meta:
+        model = Profile
+        fields = ['user_photo']
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели категории (`Category`).
+    Используется для представления категорий контента.
+    """
+    class Meta:
+        model = Category
+        fields = ['name']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели комментария (`Comment`).
+    Используется для представления комментариев к контенту.
+    """
+    author_comment = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ['comment', 'pub_date_time', 'author_comment']
+
+
+class ContentStatisticSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели статистики (`Statistic`).
+    Используется для представления статистики контента.
+    """
+    class Meta:
+        model = Statistic
+        fields = ['number_of_likes', 'number_of_dislikes', 'number_of_comments', 'number_of_views']
 
 
 class ContentSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для модели `Content`. Преобразует объекты контента в формат JSON и наоборот.
-
-    Этот сериализатор используется для представления отдельных элементов контента, таких как статьи, посты и т.п.
-    Он включает в себя информацию о контенте, связанную с полями модели `Content`, такими как заголовок, описание,
-    изображение, категория и автор.
-
-    Атрибуты:
-        - id (int): Уникальный идентификатор контента.
-        - title (str): Заголовок контента.
-        - content (str): Основной текст контента.
-        - description (str): Описание контента.
-        - preview_image (str): Изображение-превью контента.
-        - slug (str): Слаг (человекочитаемая часть URL) для контента.
-        - pub_date_time (datetime): Дата и время публикации контента.
-        - categories_content (list): Список категорий, связанных с контентом.
-        - is_private (bool): Статус приватности контента (доступен только определенным пользователям).
-        - author_content (str): Автор контента.
+    Сериализатор для модели контента (`Content`).
+    Используется для представления данных контента, включая связанные объекты.
     """
+    author_content = UserSerializer()
+    profile = ProfileSerializer(source='author_content.profile')  # Используем ProfileSerializer
+    categories_content = CategorySerializer(many=True)
+    comments = CommentSerializer(many=True)
+    content_statistic = ContentStatisticSerializer()
+
     class Meta:
         model = Content
         fields = [
@@ -34,5 +83,8 @@ class ContentSerializer(serializers.ModelSerializer):
             'pub_date_time',
             'categories_content',
             'is_private',
-            'author_content'
+            'author_content',
+            'profile',  # Поле profile
+            'comments',
+            'content_statistic',
         ]

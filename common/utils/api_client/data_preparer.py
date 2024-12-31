@@ -27,12 +27,13 @@ class RecommendationDTO:
     @staticmethod
     def create(content: Content) -> "RecommendationDTO":
         """Метод используется для создания обекта dataclass """
+        rating = content.content_statistic.rating if hasattr(content, 'content_statistic') else 0.0
         return RecommendationDTO(
             slug=content.slug,
             title=content.title,
             description=content.description,
             pub_date_time=content.pub_date_time,
-            rating=content.reating,
-            categories_content=content.categories_content,
+            rating=rating,
+            categories_content=list(content.categories_content.values_list('name', flat=True)),
             tags=content.tags
         )
