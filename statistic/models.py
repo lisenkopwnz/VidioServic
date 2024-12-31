@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from content.models.model_content import Content
 from statistic.utils.rating_services import SignificanceRating
 
 
@@ -18,7 +17,7 @@ class Statistic(models.Model):
                number_of_comments (int): Количество комментариев
                number_of_views (int): Количество просмотров
            """
-    content = models.OneToOneField(Content, on_delete=models.CASCADE, primary_key=True,
+    content = models.OneToOneField('content.Content', on_delete=models.CASCADE, primary_key=True,
                                    related_name='content_statistic',
                                    verbose_name='Видиоконтент')
     author = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='author_content',
