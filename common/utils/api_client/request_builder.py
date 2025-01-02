@@ -1,8 +1,11 @@
+import logging
 from typing import Dict, Any
 import httpx
 
 from StreamingPlatform.settings import API_KEY
 from common.utils.api_client.exceptions import ApiClientException
+
+logger = logging.getLogger('duration_request_view')
 
 
 class HttpxClientBuilder:
@@ -13,6 +16,7 @@ class HttpxClientBuilder:
             timeout_connect: int,
             timeout_read: int,
             timeout_write: int,
+            timeout_pool: int,
             verify_ssl: bool
             ):
         """
@@ -25,7 +29,8 @@ class HttpxClientBuilder:
         self.base_url = base_url
         self.timeout = httpx.Timeout(connect=timeout_connect,  #создаем универсальный таймаут для различных операций
                                      read=timeout_read,
-                                     write=timeout_write)
+                                     write=timeout_write,
+                                     pool=timeout_pool)
         self.verify_ssl = verify_ssl
 
     @staticmethod
@@ -48,6 +53,7 @@ class HttpxClientBuilder:
         :param endpoint: конечная часть URL.
         :returns: полный URL.
         """
+        logger.info(f'{self.base_url}/{endpoint}')
         return f'{self.base_url}/{endpoint}'
 
     def send_post_request(self,endpoint: str, data: Dict[str, Any])-> Any:
