@@ -45,18 +45,26 @@ class ContentBasedRecommendationsClient(AbstractApiClient):
     def __init__(
             self,
             endpoint: str,
-            data: Dict[str:Any],
+            data: Dict[str,Any],
             base_url: str = RECOMMENDATION_SERVICE_URL,
             timeout_connect: int = 5,
             timeout_read: int = 10,
-            timeout_write: int = 5.0,
+            timeout_write: int = 5,
+            timeout_pool: int = 5,
             verify_ssl: bool = True
     ):
-        self.client = HttpxClientBuilder(base_url,timeout_connect,timeout_read,timeout_write,verify_ssl)
+        self.client = HttpxClientBuilder(
+            base_url,
+            timeout_connect,
+            timeout_read,
+            timeout_write,
+            timeout_pool,
+            verify_ssl,
+        )
         self.endpoint = endpoint
         self.data = data
 
     def post(self):
         """Отправляет запрос на API для получения рекомендаций """
         response = self.client.send_post_request(self.endpoint,self.data)
-        return response.json
+        return response.json()

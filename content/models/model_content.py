@@ -35,7 +35,7 @@ class Content(models.Model):
     preview_image = models.ImageField(verbose_name='Превью',
                                       upload_to='preview/$Y/%m/%d/',
                                       blank=True, null=True,
-                                      default=None)
+                                      )
     description = models.TextField(verbose_name="Описание",
                                    default=None,
                                    null=True,

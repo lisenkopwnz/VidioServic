@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
 
+from content.api.views.content_retrieve_view import ContentRetrieveView
 from content.api.views.content_view_set import ContentViewSet
 from content.api.views.elasticsearch_view import ElasticsearchView
 
@@ -12,5 +13,6 @@ router.register(r'content', ContentViewSet, basename='content')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('search/', ElasticsearchView.as_view(), name='search')
+    path('search/', ElasticsearchView.as_view(), name='search'),
+    path('video/<slug:slug>/',ContentRetrieveView.as_view(), name='video')
 ]
